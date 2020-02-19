@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'dart:math' as math;
 
+final columns = kGameDifficultyColumns['easy'];
+final rows = kGameDifficultyRows['easy'];
+
 class GameSurface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -20,13 +23,10 @@ class Mines extends StatefulWidget {
 }
 
 class _MinesState extends State<Mines> {
-  Image mine = Image.asset("images/minas.png");
   Text numbers = Text("1");
 
-  List<List<Widget>> child = new List.generate(kGameDifficultyColumns['easy'],
-      (i) => new List(kGameDifficultyRows['easy']));
-  List<List<bool>> isDisable = new List.generate(kGameDifficultyColumns['easy'],
-      (i) => new List(kGameDifficultyRows['easy']));
+  List<List> child = gameMatrixList(columns, rows);
+  List<List> isDisable = gameMatrixList(columns, rows);
 
   isButtonDisable(superIndex, index) {
     return (isDisable[superIndex][index] != null)
@@ -38,33 +38,18 @@ class _MinesState extends State<Mines> {
           };
   }
 
-  mineGenerator(int maxMines) {
-    int minesCounter = maxMines;
-    print(maxMines);
-    while (minesCounter > 0) {
-      int randomNumber = math.Random().nextInt(
-          kGameDifficultyRows['easy'] * kGameDifficultyColumns['easy'] - 1);
-      int rowCount = (randomNumber ~/ kGameDifficultyColumns['easy']);
-      int columnCount = randomNumber % kGameDifficultyColumns['easy'];
-      if (child[columnCount][rowCount] == null) {
-        child[columnCount][rowCount] = mine;
-        minesCounter = minesCounter - 1;
-        print("$columnCount $rowCount");
-      }
-    }
-  }
+  //child[columnCount][rowCount];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    mineGenerator(7);
   }
 
   @override
   Widget build(BuildContext context) {
     List<Expanded> gridGenerator(superIndex) {
-      return List.generate(kGameDifficultyRows['easy'], (index) {
+      return List.generate(rows, (index) {
         return Expanded(
           child: RaisedButton(
             elevation: 6,
@@ -84,7 +69,7 @@ class _MinesState extends State<Mines> {
     }
 
     final List<Expanded> contentRows = new List.generate(
-        kGameDifficultyColumns['easy'],
+        columns,
         (index) => Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -97,4 +82,25 @@ class _MinesState extends State<Mines> {
       children: contentRows,
     );
   }
+}
+
+gameMatrixList(column, row) {
+  return (new List.generate(column, (i) => new List(row)));
+}
+
+mineGenerator(int maxMines, List<List> list) {
+  Image mine = Image.asset("images/minas.png");
+  int minesCounter = maxMines;
+  while (minesCounter > 0) {
+    int randomNumber = math.Random().nextInt(
+        kGameDifficultyRows['easy'] * kGameDifficultyColumns['easy'] - 1);
+    int rowCount = (randomNumber ~/ kGameDifficultyColumns['easy']);
+    int columnCount = randomNumber % kGameDifficultyColumns['easy'];
+    if (list[columnCount][rowCount] == null) {
+      list[columnCount][rowCount] = mine;
+      minesCounter = minesCounter - 1;
+      print("$columnCount $rowCount");
+    }
+  }
+  return list;
 }
