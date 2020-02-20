@@ -21,6 +21,24 @@ class _GridBoardState extends State<GridBoard> {
   List<List> isDisable = gameMatrixList(columns, rows);
   List<List> isNumber = gameMatrixList(columns, rows);
 
+  void _showDialog(BuildContext context) {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: new Text("Game over"),
+        content: new Text("Wana try again"),
+        actions: <Widget>[
+          // usually buttons at the bottom of the dialog
+          new FlatButton(
+            child: new Text("do you want to try again?"),
+            onPressed: () {},
+          ),
+        ],
+      ),
+    );
+  }
+
   sweepGrid(superIndex, index) {
     return (isDisable[superIndex][index] != null)
         ? null
@@ -28,6 +46,9 @@ class _GridBoardState extends State<GridBoard> {
             setState(() {
               reveal(index, superIndex);
               isDisable[superIndex][index] = true;
+              if (child[superIndex][index] == mineWidget) {
+                _showDialog(context);
+              }
             });
           };
   }
@@ -38,7 +59,7 @@ class _GridBoardState extends State<GridBoard> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    child = mineGenerator(7, child);
+    child = mineGenerator(10, child);
   }
 
   void reveal(x, y) {
@@ -78,7 +99,7 @@ class _GridBoardState extends State<GridBoard> {
             disabledColor: Colors.white,
             padding: EdgeInsets.all(0),
             splashColor: Colors.teal[500],
-            onPressed: isButtonDisable(superIndex, index),
+            onPressed: sweepGrid(superIndex, index),
           ),
         );
       });
