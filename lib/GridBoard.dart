@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 final columns = kGameDifficultyColumns['easy'];
 final rows = kGameDifficultyRows['easy'];
+Image mineWidget = Image.asset("images/minas.png");
 
 class GridBoard extends StatefulWidget {
   @override
@@ -18,12 +19,14 @@ class _GridBoardState extends State<GridBoard> {
 
   List<List> child = gameMatrixList(columns, rows);
   List<List> isDisable = gameMatrixList(columns, rows);
+  List<List> isNumber = gameMatrixList(columns, rows);
 
-  isButtonDisable(superIndex, index) {
+  sweepGrid(superIndex, index) {
     return (isDisable[superIndex][index] != null)
         ? null
         : () {
             setState(() {
+              reveal(index, superIndex);
               isDisable[superIndex][index] = true;
             });
           };
@@ -40,9 +43,15 @@ class _GridBoardState extends State<GridBoard> {
 
   void reveal(x, y) {
     if (outBounds(x, y)) return;
-    if (isDisable[x][y]) return;
-    isDisable[x][y] = true;
-    if (calcNear(x, y, child) != 0) return;
+    if (isNumber[y][x] != null) return;
+    if (child[y][x] == mineWidget) return;
+    isNumber[y][x] = true;
+    int minesNumber = calcNear(x, y, child);
+    if (minesNumber != 0) {
+      child[y][x] = generateGridNumber(minesNumber);
+      return;
+    }
+    isDisable[y][x] = true;
     reveal(x - 1, y - 1);
     reveal(x - 1, y + 1);
     reveal(x + 1, y - 1);
@@ -96,7 +105,6 @@ gameMatrixList(column, row) {
 }
 
 mineGenerator(int maxMines, List<List> list) {
-  Image mine = Image.asset("images/minas.png");
   int minesCounter = maxMines;
   while (minesCounter > 0) {
     int randomNumber = math.Random().nextInt(
@@ -105,7 +113,7 @@ mineGenerator(int maxMines, List<List> list) {
     int columnCount = randomNumber % kGameDifficultyColumns['easy'];
 
     if (list[columnCount][rowCount] == null) {
-      list[columnCount][rowCount] = mine;
+      list[columnCount][rowCount] = mineWidget;
       minesCounter = minesCounter - 1;
       print("$columnCount $rowCount");
     }
@@ -123,7 +131,7 @@ int calcNear(int x, int y, List<List> mine) {
   for (int offsetX = -1; offsetX <= 1; offsetX++) {
     for (int offsetY = -1; offsetY <= 1; offsetY++) {
       if (outBounds(offsetX + x, offsetY + y)) continue;
-      i += (mine[offsetX + x][offsetY + y] != null) ? 1 : 0;
+      i += (mine[offsetY + y][offsetX + x] == mineWidget) ? 1 : 0;
     }
   }
   return i;
