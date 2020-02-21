@@ -17,9 +17,16 @@ class _GridBoardState extends State<GridBoard> {
     return numbers;
   }
 
-  List<List> child = gameMatrixList(columns, rows);
-  List<List> isDisable = gameMatrixList(columns, rows);
-  List<List> isNumber = gameMatrixList(columns, rows);
+  List<List> child;
+  List<List> isDisable;
+  List<List> isNumber;
+
+  gameInit() {
+    child = gameMatrixList(columns, rows);
+    isDisable = gameMatrixList(columns, rows);
+    isNumber = gameMatrixList(columns, rows);
+    child = mineGenerator(10, child);
+  }
 
   void _showDialog(BuildContext context) {
     // flutter defined function
@@ -34,6 +41,8 @@ class _GridBoardState extends State<GridBoard> {
             child: new Text("do you want to try again?"),
             onPressed: () {
               loseGame = false;
+              resetGame();
+              Navigator.of(context).pop();
             },
           ),
         ],
@@ -60,6 +69,15 @@ class _GridBoardState extends State<GridBoard> {
           };
   }
 
+  resetGame() {
+    child.clear();
+    isDisable.clear();
+    isNumber.clear();
+    setState(() {
+      gameInit();
+    });
+  }
+
   sweepGrid(superIndex, index) {
     return (isDisable[superIndex][index] != null)
         ? null
@@ -72,7 +90,7 @@ class _GridBoardState extends State<GridBoard> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    child = mineGenerator(10, child);
+    gameInit();
   }
 
   void reveal(x, y) {
@@ -81,11 +99,11 @@ class _GridBoardState extends State<GridBoard> {
     if (child[y][x] == mineWidget) return;
     isNumber[y][x] = true;
     int minesNumber = calcNear(x, y, child);
+    isDisable[y][x] = true;
     if (minesNumber != 0) {
       child[y][x] = generateGridNumber(minesNumber);
       return;
     }
-    isDisable[y][x] = true;
     reveal(x - 1, y - 1);
     reveal(x - 1, y + 1);
     reveal(x + 1, y - 1);
