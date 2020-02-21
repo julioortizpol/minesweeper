@@ -27,30 +27,43 @@ class _GridBoardState extends State<GridBoard> {
       context: context,
       builder: (context) => AlertDialog(
         title: new Text("Game over"),
-        content: new Text("Wana try again"),
+        content: new Text("do you want to try again?"),
         actions: <Widget>[
           // usually buttons at the bottom of the dialog
           new FlatButton(
             child: new Text("do you want to try again?"),
-            onPressed: () {},
+            onPressed: () {
+              loseGame = false;
+            },
           ),
         ],
       ),
     );
   }
 
-  sweepGrid(superIndex, index) {
-    return (isDisable[superIndex][index] != null)
-        ? null
+  bool loseGame = false;
+
+  gridAction(index, superIndex) {
+    return (loseGame)
+        ? () {
+            _showDialog(context);
+          }
         : () {
             setState(() {
               reveal(index, superIndex);
               isDisable[superIndex][index] = true;
               if (child[superIndex][index] == mineWidget) {
+                loseGame = true;
                 _showDialog(context);
               }
             });
           };
+  }
+
+  sweepGrid(superIndex, index) {
+    return (isDisable[superIndex][index] != null)
+        ? null
+        : gridAction(index, superIndex);
   }
 
   //child[columnCount][rowCount];

@@ -9,6 +9,8 @@ class GameSurface extends StatelessWidget {
         appBar: AppBar(
           title: Text("MinesSweper"),
         ),
-        body: SafeArea(child: GridBoard()));
+        body: SafeArea(
+          child: GridBoard(),
+        ));
   }
 }
