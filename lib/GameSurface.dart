@@ -7,10 +7,30 @@ class GameSurface extends StatelessWidget {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.teal[200],
           title: Text("MinesSweper"),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.settings,
+                color: Colors.white,
+              ),
+              tooltip: "Settings",
+              onPressed: () {},
+            ),
+          ],
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(40),
+            child: Row(
+              children: <Widget>[],
+            ),
+          ),
         ),
         body: SafeArea(
-          child: GridBoard(),
+          child: Container(
+            child: GridBoard(),
+          ),
         ));
   }
 }

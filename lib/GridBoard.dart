@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 final columns = kGameDifficultyColumns['easy'];
 final rows = kGameDifficultyRows['easy'];
-Image mineWidget = Image.asset("images/minas.png");
+Image mineWidget = Image.asset("images/mine.png");
 
 class GridBoard extends StatefulWidget {
   @override
