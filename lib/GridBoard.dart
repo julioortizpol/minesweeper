@@ -12,6 +12,7 @@ class GridBoard extends StatefulWidget {
 }
 
 class _GridBoardState extends State<GridBoard> {
+  Map<String, bool> flags = {};
   generateGridNumber(int nearMines) {
     Text numbers = Text("$nearMines");
     return numbers;
@@ -70,6 +71,7 @@ class _GridBoardState extends State<GridBoard> {
   }
 
   resetGame() {
+    flags.clear();
     child.clear();
     isDisable.clear();
     isNumber.clear();
@@ -79,7 +81,8 @@ class _GridBoardState extends State<GridBoard> {
   }
 
   sweepGrid(superIndex, index) {
-    return (isDisable[superIndex][index] != null)
+    return (isDisable[superIndex][index] != null ||
+            flags.containsKey('$superIndex,$index'))
         ? null
         : gridAction(index, superIndex);
   }
@@ -114,23 +117,48 @@ class _GridBoardState extends State<GridBoard> {
     reveal(x, y + 1);
   }
 
+  void assignFlag(superIndex, index) {
+    setState(() {
+      if (flags.length < 10) {
+        flags['$superIndex,$index'] = true;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Expanded> gridGenerator(superIndex) {
       return List.generate(rows, (index) {
         return Expanded(
-          child: RaisedButton(
-            elevation: 6,
-            child: (isDisable[superIndex][index] != null)
-                ? child[superIndex][index]
+          child: GestureDetector(
+            onLongPress: () {
+              print("klk");
+              assignFlag(superIndex, index);
+            },
+            onTap: (flags.containsKey('$superIndex,$index'))
+                ? () {
+                    setState(() {
+                      flags.remove('$superIndex,$index');
+                    });
+                  }
                 : null,
-            shape:
-                RoundedRectangleBorder(side: BorderSide(color: Colors.white30)),
-            color: Colors.teal[400],
-            disabledColor: Colors.white,
-            padding: EdgeInsets.all(0),
-            splashColor: Colors.teal[500],
-            onPressed: sweepGrid(superIndex, index),
+            child: RaisedButton(
+              elevation: 6,
+              child: (isDisable[superIndex][index] != null)
+                  ? child[superIndex][index]
+                  : (flags.containsKey('$superIndex,$index'))
+                      ? Text("5")
+                      : null,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.white30)),
+              color: Colors.teal[400],
+              disabledColor: (flags.containsKey('$superIndex,$index'))
+                  ? Colors.teal[400]
+                  : Colors.white,
+              padding: EdgeInsets.all(0),
+              splashColor: Colors.teal[500],
+              onPressed: sweepGrid(superIndex, index),
+            ),
           ),
         );
       });
