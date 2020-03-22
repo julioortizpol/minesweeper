@@ -6,9 +6,9 @@ class MineSweeperAppBar extends StatefulWidget {
 }
 
 class _MineSweeperAppBarState extends State<MineSweeperAppBar> {
-  Widget createBottomElement(widget) {
+  Widget createBottomElement(widget, {double paddingRight = 0}) {
     return Padding(
-      padding: const EdgeInsets.only(left: 10, bottom: 8),
+      padding: EdgeInsets.only(left: 10, bottom: 8, right: paddingRight),
       child: Card(
         elevation: 7,
         color: Colors.teal[200],
@@ -17,6 +17,22 @@ class _MineSweeperAppBarState extends State<MineSweeperAppBar> {
           child: widget,
         ),
       ),
+    );
+  }
+
+  Widget createReusableRowIconText(IconData icon, String text) {
+    return Row(
+      children: <Widget>[
+        Icon(
+          icon,
+          size: 40,
+          color: Colors.teal[500],
+        ),
+        Text(
+          text,
+          style: TextStyle(color: Colors.teal[500], fontSize: 20),
+        )
+      ],
     );
   }
 
@@ -41,37 +57,17 @@ class _MineSweeperAppBarState extends State<MineSweeperAppBar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            createBottomElement(Row(
-              children: <Widget>[
-                Icon(
-                  Icons.timer,
-                  size: 40,
-                  color: Colors.teal[500],
-                ),
-                Text(
-                  "   09:00 ",
-                  style: TextStyle(color: Colors.teal[500], fontSize: 20),
-                )
-              ],
-            )),
+            createBottomElement(
+              createReusableRowIconText(Icons.timer, "   09:00 "),
+            ),
             createBottomElement(Icon(
               Icons.print,
               color: Colors.teal[500],
               size: 40,
             )),
-            createBottomElement(Row(
-              children: <Widget>[
-                Icon(
-                  Icons.timer,
-                  size: 40,
-                  color: Colors.teal[500],
-                ),
-                Text(
-                  "   00:00",
-                  style: TextStyle(color: Colors.teal[500], fontSize: 20),
-                )
-              ],
-            )),
+            createBottomElement(
+                createReusableRowIconText(Icons.timer, "   09:00 "),
+                paddingRight: 10),
           ],
         ),
       ),
