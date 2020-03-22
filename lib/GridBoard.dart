@@ -119,7 +119,7 @@ class _GridBoardState extends State<GridBoard> {
 
   void assignFlag(superIndex, index) {
     setState(() {
-      if (flags.length < 10) {
+      if (flags.length < 10 && isDisable[superIndex][index] == null) {
         flags['$superIndex,$index'] = true;
       }
     });
