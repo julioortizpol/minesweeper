@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 final columns = kGameDifficultyColumns['easy'];
 final rows = kGameDifficultyRows['easy'];
 Image mineWidget = Image.asset("images/mine.png");
+Image flagWidget = Image.asset("images/flag.png");
 
 class GridBoard extends StatefulWidget {
   @override
@@ -104,6 +105,7 @@ class _GridBoardState extends State<GridBoard> {
     int minesNumber = calcNear(x, y, child);
     isDisable[y][x] = true;
     if (minesNumber != 0) {
+      flags.remove('$y,$x');
       child[y][x] = generateGridNumber(minesNumber);
       return;
     }
@@ -147,7 +149,7 @@ class _GridBoardState extends State<GridBoard> {
               child: (isDisable[superIndex][index] != null)
                   ? child[superIndex][index]
                   : (flags.containsKey('$superIndex,$index'))
-                      ? Text("5")
+                      ? flagWidget
                       : null,
               shape: RoundedRectangleBorder(
                   side: BorderSide(color: Colors.white30)),
